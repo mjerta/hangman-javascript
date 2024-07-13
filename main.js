@@ -28,83 +28,95 @@ const keyCodeToLetter = {
 };
 
 const words = ["apple", "banana", "orange", "grape", "pineapple", "kiwi", "strawberry", "blueberry", "watermelon", "peach", "pear", "plum", "mango", "cherry", "apricot", "fig", "lemon", "lime", "coconut", "pomegranate", "raspberry", "blackberry", "nectarine", "avocado", "guava", "persimmon", "melon", "dragonfruit"];
+let selectedWord = getRandomWord(words);
 
-const output = document.querySelector(".word-result");
-const selectedWord = getRandomWord(words);
-const summary = document.querySelector(".summary");
-let guessedLetters = new Set();
+const result = document.querySelector(".result-section");
+const wordResult = document.querySelector(".word-result");
+const mainAction = document.querySelector(".main-action");
+const optionalAction = document.querySelector(".optional-action");
+const imageElementHangman = document.querySelector(".hangman");
+const fullGuessForm = document.querySelector(".full-guess-form");
+const fullGuessInput = document.querySelector(".full-guess-input");
+let gameFinished = false;
+
+let guessedLetters = [];
+// The following will keep track of the wrong and right inputs
 let wrongInput = 0;
 let rightInput = 0;
-const imageElement = document.querySelector(".hangman");
 
 function getRandomWord(words) {
   const randomIndex = Math.floor(Math.random() * words.length);
   return words[randomIndex];
-  0
 }
 
-function visualizeHangmanLetters(word, guessedLetters) {
-  output.textContent = ""; // Clear previous output
-  for (let i = 0; i < word.length; i++) {
-    const letter = word[i];
-    if (guessedLetters.has(letter)) {
-      output.textContent += letter + " ";
+function visualizeHangmanLetters() {
+  // This will clear previous output and will print the updates output
+  wordResult.textContent = "";
+  for (let i = 0; i < selectedWord.length; i++) {
+    const letter = selectedWord[i];
+    if (guessedLetters.includes(letter)) {
+      wordResult.textContent += letter + " ";
     } else {
-      output.textContent += "_ ";
+      wordResult.textContent += "_ ";
     }
   }
 }
 
 function visualizeHangman() {
-  if (wrongInput === 1) {
-    imageElement.src = './assets/hangman-1.svg';
-  } else if (wrongInput === 2) {
-    imageElement.src = './assets/hangman-2.svg';
-  } else if (wrongInput === 3) {
-    imageElement.src = './assets/hangman-3.svg';
-  } else if (wrongInput === 4) {
-    imageElement.src = './assets/hangman-4.svg';
-  } else if (wrongInput === 5) {
-    imageElement.src = './assets/hangman-5.svg';
-  } else if (wrongInput === 6) {
-    imageElement.src = './assets/hangman-6.svg';
-    console.log(summary);
-    summary.textContent = "You lost buddy";
-    console.log("you lost buddy");
-  } else {
-    imageElement.src = './assets/hangman-0.svg'; // Default image if no condition matches
-
+  switch (wrongInput) {
+    case 1:
+      imageElementHangman.src = './assets/hangman-1.svg';
+      break;
+    case 2:
+      imageElementHangman.src = './assets/hangman-2.svg';
+      break;
+    case 3:
+      imageElementHangman.src = './assets/hangman-3.svg';
+      break;
+    case 4:
+      imageElementHangman.src = './assets/hangman-4.svg';
+      break;
+    case 5:
+      imageElementHangman.src = './assets/hangman-5.svg';
+      break;
+    case 6:
+      imageElementHangman.src = './assets/hangman-6.svg';
+      break;
+    default:
+      imageElementHangman.src = './assets/hangman-0.svg'; // Default image if no condition matches
   }
-  console.log(wrongInput);
 }
 
 function handleWrongInput(wrongInput) {
   visualizeHangman();
   if (wrongInput === 6) {
-    summary.textContent = "You lost buddy";
+    mainAction.textContent = "You lost buddy, the word should have been:";
+    optionalAction.textContent = "";
+    wordResult.textContent = formatStringForResult(selectedWord);
+    gameFinished = true;
+    initializeGame();
   } else {
-    summary.textContent = "Enter a letter";
+    mainAction.textContent = "wrong guess, enter a letter or fill in a word";
   }
 }
 
 function handleRightInput(letter) {
-  if (guessedLetters.size >= 1 && guessedLetters.has(letter)) {
-    console.log("test1")
-    summary.textContent = "You already got this letter";
+  // Below message will only been shown if the player already guessed once at least and if the letter already exists in the guessedLetters array.
+  if (guessedLetters.length >= 1 && guessedLetters.includes(letter)) {
+    mainAction.textContent = "You already got this letter";
   } else {
-    console.log(letter);
-    console.log(selectedWord.split(letter).length - 1);
-    rightInput++;
-    console.log(`right input ${rightInput}`);
-    guessedLetters.add(letter);
-    summary.textContent = "You guest a correct letter";
-    console.log(rightInput)
-    console.log(selectedWord.length);
+    mainAction.textContent = "You guest a correct letter";
+    // This will get the guessed letter and if there are more duplicates it will add them to the rightInput variable
+    rightInput += selectedWord.split(letter).length - 1;
+    guessedLetters.push(letter);
+    // Eventually if the the all letters has been guessed the game is over. And initialize game will be activated.
     if (rightInput === selectedWord.length) {
-      summary.textContent = "You won";
+      mainAction.textContent = "You won";
+      gameFinished = true;
+      initializeGame();
     }
-
-    visualizeHangmanLetters(selectedWord, guessedLetters, letter);
+    // The hangman will be updated to the correct image
+    visualizeHangmanLetters();
   }
 }
 
@@ -114,22 +126,77 @@ function checkLetter(letter) {
     handleWrongInput(wrongInput)
   } else {
     handleRightInput(letter);
+  }
+}
 
+function formatStringForResult(string) {
+  return string.split("").join(" ");
+}
+
+function checkFullWord(e, word) {
+  e.preventDefault();
+  e.target.reset();
+  if (selectedWord !== word) {
+    wrongInput++;
+    handleWrongInput(wrongInput)
+  } else {
+    wordResult.textContent = formatStringForResult(word);
+    mainAction.textContent = "You won";
+    gameFinished = true;
+    initializeGame();
   }
 }
 
 function handleKeyPress(event) {
+  // This will prevent the key handling is also being activated while pressing inside the input element
+  if (document.activeElement === fullGuessInput) {
+    return;
+  }
   const keyCode = event.keyCode;
   if (keyCode >= 97 && keyCode <= 122) {
     const letter = keyCodeToLetter[keyCode];
-    console.log(letter);
     checkLetter(letter);
   }
 }
 
-document.addEventListener('keypress', handleKeyPress);
+function refreshAllValuesForGame() {
+  selectedWord = getRandomWord(words);
+  console.log("refreshAllValuesForGame");
+  mainAction.textContent = "Enter your first letter";
+  guessedLetters.length = 0;
+  wrongInput = 0;
+  rightInput = 0;
+}
 
-visualizeHangmanLetters(selectedWord, guessedLetters);
-visualizeHangman();
-console.log("test");
-console.log(wrongInput);
+function initializeGame() {
+
+  if (!gameFinished) {
+    document.addEventListener('keypress', handleKeyPress);
+    fullGuessForm.addEventListener('submit', (e) => {
+      checkFullWord(e, fullGuessInput.value);
+    });
+  // The following will run the first time the page is loaded
+    visualizeHangmanLetters();
+    visualizeHangman();
+  } else {
+    // This will get rid of the 2 event listeners
+    document.removeEventListener('keypress', handleKeyPress);
+    fullGuessForm.removeEventListener('submit', (e) => {
+      checkFullWord(e, fullGuessInput.value);
+    });
+    // restart the game
+    const restartGameButton = document.createElement("button");
+    restartGameButton.classList.add("btn-game-starter");
+    restartGameButton.textContent = "Start again";
+    result.appendChild(restartGameButton);
+    restartGameButton.addEventListener("click", () => {
+      gameFinished = false;
+      restartGameButton.remove();
+      refreshAllValuesForGame();
+      initializeGame()
+    });
+  }
+}
+
+// The initializeGame will start with every load of this page
+initializeGame();
