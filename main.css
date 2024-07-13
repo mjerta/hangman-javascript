@@ -1,0 +1,51 @@
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background: #ffd97e;
+}
+
+
+.play-music-button {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  height: 4rem;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid;
+  padding: 1.3rem;
+}
+
+.wrapper {
+  display: flex;
+  max-width: 800px;
+  border: 1px solid;
+  flex-direction: column;
+}
+
+.guess-section {
+  border: 1px solid red;
+  padding: 4rem;
+}
+
+.result-section {
+  border: 1px solid blue;
+  padding: 4rem;
+
+  &  * {
+    padding-bottom: 2rem;
+  }
+
+}
+
+.hangman {
+  width: 100%;
+  /*padding: 4rem;*/
+}

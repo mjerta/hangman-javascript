@@ -148,6 +148,7 @@ function checkFullWord(e, word) {
 }
 
 function handleKeyPress(event) {
+  playMusic();
   // This will prevent the key handling is also being activated while pressing inside the input element
   if (document.activeElement === fullGuessInput) {
     return;
@@ -175,7 +176,7 @@ function initializeGame() {
     fullGuessForm.addEventListener('submit', (e) => {
       checkFullWord(e, fullGuessInput.value);
     });
-  // The following will run the first time the page is loaded
+    // The following will run the first time the page is loaded
     visualizeHangmanLetters();
     visualizeHangman();
   } else {
@@ -200,3 +201,33 @@ function initializeGame() {
 
 // The initializeGame will start with every load of this page
 initializeGame();
+
+const audio = new Audio("https://www.televisiontunes.com/uploads/audio/The%20Good%20the%20Bad%20and%20the%20Ugly.mp3");
+const audiobtn = document.querySelector(".play-music-button");
+let audioBtnIsPressed = false;
+
+function playMusic() {
+  audio.play().catch(error => {
+    console.error("Error playing the audio: ", error)
+  })
+}
+
+function toggleSoundAudioButton() {
+  if (!audioBtnIsPressed) {
+    audioBtnIsPressed = true;
+    audio.volume = 0;
+    audiobtn.src = './assets/volume-on.svg';
+  } else {
+    audioBtnIsPressed = false;
+    audio.volume = 1;
+    audiobtn.src = './assets/volume-off.svg';
+  }
+
+}
+
+audiobtn.addEventListener("click", toggleSoundAudioButton);
+
+audio.addEventListener("ended", ()=> {
+  audio.currentTime = 0;
+  playMusic();
+});

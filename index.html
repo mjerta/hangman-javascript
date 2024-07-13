@@ -2,24 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Title</title>
+  <link rel="stylesheet" href="./main.css">
 </head>
 <body>
-  
-  <div class="full-word">
-    <form class="full-guess-form">
-      <input class= "full-guess-input" type="text">
-      <button type="submit">Send your guess</button>
-    </form>
+  <img class="play-music-button" src="assets/volume-off.svg" alt="volume-off">
+  <div class="wrapper">
+    <section class="guess-section">
+      <form class="full-guess-form">
+        <input class="full-guess-input" type="text">
+        <button type="submit">Send your guess</button>
+      </form>
+    </section>
+    <section class="result-section">
+      <div class="letter-display">
+        <h2 class="main-action">Enter your first letter</h2>
+        <h2 class="optional-action">Or enter the full word</h2>
+      </div>
+      <h1 class="word-result"></h1>
+      <img class="hangman" id="image" src="./assets/hangman-0.svg" alt="Default Image">
+    </section>
   </div>
-  <section class="result-section">
-  <div class="letter-display">
-    <h2 class="main-action">Enter your first letter</h2>
-    <h2 class="optional-action">Or enter the full word</h2>
-  </div>
-    <h1 class="word-result"></h1>
-    <img class="hangman" id="image" src="./assets/hangman-0.svg" alt="Default Image">
-  </section>
   <script src="./main.js"></script>
 </body>
 </html>
