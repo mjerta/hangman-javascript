@@ -4,6 +4,16 @@
   box-sizing: border-box;
 }
 
+button {
+  border: none;
+  outline: none;
+}
+
+html {
+  font-size: 12px;
+}
+
+
 body {
   display: flex;
   justify-content: center;
@@ -11,12 +21,12 @@ body {
   background: #ffd97e;
 }
 
-
 .play-music-button {
   position: absolute;
   top: 2rem;
   right: 2rem;
   height: 4rem;
+  width: 4rem;
   cursor: pointer;
   border-radius: 50%;
   border: 2px solid;
@@ -26,26 +36,86 @@ body {
 .wrapper {
   display: flex;
   max-width: 800px;
-  border: 1px solid;
   flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1
 }
 
 .guess-section {
-  border: 1px solid red;
-  padding: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-basis: 10rem;
+  padding: 1rem;
+}
+
+.full-guess-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  & button {
+    padding: .5rem 2rem;
+    background-color: #4CAF50;
+    border-radius: 3px;
+    font-size: 1rem;
+    font-weight: bold;
+    width:  12rem;
+    cursor: pointer;
+
+    &:hover {
+      background: none;
+      background-color: hsl(122, 39%, 60%);
+    }
+  }
+}
+
+.btn-game-starter {
+  padding: .5rem 2rem;
+  background-color: #4CAF50;
+  border-radius: 3px;
+  font-size: 1rem;
+  font-weight: bold;
+  width: 12rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.full-guess-input {
+  padding: .5rem 2rem;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  width: 12rem;
 }
 
 .result-section {
-  border: 1px solid blue;
-  padding: 4rem;
-
-  &  * {
-    padding-bottom: 2rem;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
 
 }
 
+.story-text {
+  max-width: 380px;
+  flex-basis: 120px;
+  flex-shrink: 1;
+}
+
+.word-result {
+  padding: 1rem 0;
+}
+
 .hangman {
-  width: 100%;
-  /*padding: 4rem;*/
+  height: 20rem;
+
+}
+
+@media (min-width: 800px) {
+  html {
+    font-size: 16px;
+  }
 }

@@ -96,7 +96,7 @@ function handleWrongInput(wrongInput) {
     gameFinished = true;
     initializeGame();
   } else {
-    mainAction.textContent = "wrong guess, enter a letter or fill in a word";
+    mainAction.textContent = "wrong guess";
   }
 }
 
@@ -148,7 +148,9 @@ function checkFullWord(e, word) {
 }
 
 function handleKeyPress(event) {
-  playMusic();
+  if (!musicStartPlaying) {
+    playMusic();
+  }
   // This will prevent the key handling is also being activated while pressing inside the input element
   if (document.activeElement === fullGuessInput) {
     return;
@@ -162,7 +164,6 @@ function handleKeyPress(event) {
 
 function refreshAllValuesForGame() {
   selectedWord = getRandomWord(words);
-  console.log("refreshAllValuesForGame");
   mainAction.textContent = "Enter your first letter";
   guessedLetters.length = 0;
   wrongInput = 0;
@@ -202,13 +203,21 @@ function initializeGame() {
 // The initializeGame will start with every load of this page
 initializeGame();
 
+
+// Below is the part that is handling the music and the story line
+let musicStartPlaying = false;
 const audio = new Audio("https://www.televisiontunes.com/uploads/audio/The%20Good%20the%20Bad%20and%20the%20Ugly.mp3");
-const audiobtn = document.querySelector(".play-music-button");
+const audio2 = new Audio("./assets/mp3-files/howdy.mp3");
+const audioBtn = document.querySelector(".play-music-button");
 let audioBtnIsPressed = false;
 
 function playMusic() {
+  musicStartPlaying = true;
   audio.play().catch(error => {
     console.error("Error playing the audio: ", error)
+  })
+  audio2.play().catch(error => {
+    console.error("Error playing the audio: ", error);
   })
 }
 
@@ -216,18 +225,33 @@ function toggleSoundAudioButton() {
   if (!audioBtnIsPressed) {
     audioBtnIsPressed = true;
     audio.volume = 0;
-    audiobtn.src = './assets/volume-on.svg';
+    audio2.volume = 0;
+    audioBtn.src = './assets/volume-off.svg';
   } else {
     audioBtnIsPressed = false;
     audio.volume = 1;
-    audiobtn.src = './assets/volume-off.svg';
+    audioBtn.src = './assets/volume-on.svg';
   }
-
 }
 
-audiobtn.addEventListener("click", toggleSoundAudioButton);
+audioBtn.addEventListener("click", toggleSoundAudioButton);
 
-audio.addEventListener("ended", ()=> {
+audio.addEventListener("ended", () => {
   audio.currentTime = 0;
   playMusic();
 });
+
+const story = "\n" +
+    "In the dusty town of Sundown, the townsfolk gathered around the gallows as a mysterious stranger challenged them to a gam of Hangman. Each correct guess brought hope, each wrong one brought doom. Sweat dripped as they revealed the word: S H E R I F F. The stranger’s revelation shocked them all: the bandit was their own sheriff. Justice would be served, but trust was forever shattered in Sundown.";
+const storyText = document.querySelector(".story-text");
+let index = 0;
+
+function showNextLetter() {
+  if (index < story.length) {
+    storyText.textContent += story[index];
+    index++;
+    setTimeout(showNextLetter, 100);
+  }
+}
+
+showNextLetter();
